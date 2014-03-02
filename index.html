@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pokemon SV Matcher ver 0.01 alpha</title>
+    <style>
+        body{
+        background: #000000;
+            font-family: "Source Sans Pro", Helvetica, sans-serif;
+        }
+        .content{
+            width: 800px;
+            margin-right: auto;
+            margin-left: auto;
+            background: #ffffff;
+            height: 100%;
+            border: 3px lightgray solid;
+            padding:10px;
+        }
+        textarea {
+            border: 3px lightgray solid;
+            width: 790px;
+            height: 120px;
+        }
+        .bingo{
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+
+
+
+
+
+    <script>
+    // startWith
+    String.prototype.startWith=function(str){
+        var reg=new RegExp("^"+str);
+        return reg.test(this);
+    }
+    </script>
+</head>
+<body>
+
+
+<div class="content" >
+    <h1>Pokemon SV Matcher</h1>
+
+<p  style="color: red"> 本页面只支持Mass Dumper所生成的信息</p>
+
+    <p>使用方法:将Mass Dumper设置为Default模式,将其生成的字符串从</p>
+    <p><b>Box - Slot - Name - Nature - Ability - Spread - SV</b></p>
+    <p>行开始至结尾选中复制,并粘贴到下边的输入框中</p>
+
+
+    <textarea id="ESVinput" rows="8" cols="80"></textarea>
+
+    <p>将需要匹配的闪值列表以文本形式粘贴到下边的输入框.格式为:</p>
+    <p><b>2317 班拉达伊</b></p>
+
+    <textarea id="TSVinput" rows="8" cols="80"></textarea>
+
+    <p>确认两个文本框内容都正确输入后,点击Match按钮对比SV.Good Luck!</p>
+    <button style="width: 80px;height: 30px" onclick="match()">Match!</button>
+
+
+
+
+    <table border="1px" bordercolor="lightgray" cellspacing="0px" style="border-collapse:collapse;margin-top: 20px;text-align: center" >
+<tbody id="result">
+
+<tr>
+    <td >Box</td>
+    <td >Slot</td>
+    <td>Pokemon</td>
+    <td >Gender</td>
+    <td>Nature</td>
+    <td>Ability</td>
+    <td >HP</td>
+    <td >Atk</td>
+    <td >Def</td>
+    <td >SpA</td>
+    <td >SpD</td>
+    <td >Spd</td>
+    <td >SV</td>
+    <td >Trainer Name</td>
+</tr>
+
+</tbody>
+    </table>
+
+
+
+</div>
+
+
+
+</body>
+
+<script>
+
+
+
+
+    function match(){
+        var eggs=document.getElementById('ESVinput').value;
+        //console.log(eggs);
+        var trainers=document.getElementById('TSVinput').value;
+        //console.log(trainers);
+        var eggarray=eggs.split('\n')
+        var trainerarray=trainers.split('\n')
+        console.log(trainerarray);
+
+
+        for(var i=1;i<eggarray.length;i++){
+           var eggsv=eggarray[i];
+            eggsv=eggsv.split('[')[1].split(']')[0];
+            eggsv=parseInt(eggsv);
+            //console.log(eggsv);
+
+            var svlist=[];
+            for(var j=0;j<trainerarray.length;j++){
+               var sv=parseInt(trainerarray[j].split(' ')[0]);
+               if(sv==eggsv){
+                   console.log('bingo!'+trainerarray[j])
+                   svlist.push(j);
+               }
+            }
+
+            var spread=eggarray[i].split(' - ');
+            //console.log(spread);
+
+            var result=document.getElementById('result')
+            var newTR = result.insertRow(result.rows.length);
+
+
+
+            var box=newTR.insertCell(newTR.cells.length);
+            var slot=newTR.insertCell(newTR.cells.length);
+            var pokemon=newTR.insertCell(newTR.cells.length);
+            var Gender=newTR.insertCell(newTR.cells.length);
+            var Nature=newTR.insertCell(newTR.cells.length);
+            var Ability=newTR.insertCell(newTR.cells.length);
+            var HP=newTR.insertCell(newTR.cells.length);
+            var Atk=newTR.insertCell(newTR.cells.length);
+            var Def=newTR.insertCell(newTR.cells.length);
+            var SAtk=newTR.insertCell(newTR.cells.length);
+            var SDef=newTR.insertCell(newTR.cells.length);
+            var Spd=newTR.insertCell(newTR.cells.length);
+            var SV=newTR.insertCell(newTR.cells.length);
+            var name=newTR.insertCell(newTR.cells.length);
+
+            box.innerHTML=spread[0];
+            slot.innerHTML=spread[1];
+            pokemon.innerHTML=spread[2].split('(')[0]
+            Gender.innerHTML=spread[2].split('(')[1].split(')')[0];
+            Nature.innerHTML=spread[3];
+            Ability.innerHTML=spread[4];
+            HP.innerHTML=spread[5].split('.')[0];
+            Atk.innerHTML=spread[5].split('.')[1];
+            Def.innerHTML=spread[5].split('.')[2];
+            SAtk.innerHTML=spread[5].split('.')[3];
+            SDef.innerHTML=spread[5].split('.')[4];
+            Spd.innerHTML=spread[5].split('.')[5].split(' ')[0]
+            SV.innerHTML=spread[5].split('.')[5].split(' ')[1].split(']')[0].split('[')[1];''
+
+            var str='';
+            if(svlist.length>0){
+
+                for(var s=0; s<svlist.length;s++){
+                   str+=trainerarray[svlist[s]].split(' ')[1]+' ';
+                }
+
+                newTR.className='bingo'
+            }
+            name.innerHTML=str;
+
+        }
+
+
+    }
+
+
+
+</script>
+</html>
