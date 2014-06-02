@@ -28,7 +28,7 @@
     </style>
 
 
-
+<script src="js/lib/jquery-2.0.3.min.js"></script>
 
 
     <script>
@@ -45,13 +45,19 @@
 <div class="content" >
     <h1>Pokemon SV Matcher</h1>
 
-<p  style="color: red"> 本页面只支持Mass Dumper所生成的信息</p>
+<p  style="color: red"> 本页面支持Mass Dumper和KeySav所生成的信息</p>
 
-    <p>使用方法:将Mass Dumper设置为Default模式,将其生成的字符串从</p>
+    <p>使用方法:将KeySav或者Mass Dumper设置为Default模式,将其生成的字符串从</p>
     <p><b>Box - Slot - Name - Nature - Ability - Spread - SV</b></p>
-    <p>行开始至结尾选中复制,并粘贴到下边的输入框中</p>
+    <p>行开始至结尾选中复制,并粘贴到下边的输入框中，并选择对应格式</p>
 
 
+
+    <select id="formats">
+
+        <option value="1">Mass Dumper Default</option>
+        <option value="2">KeySav</option>
+    </select>
     <textarea id="ESVinput" rows="8" cols="80"></textarea>
 
     <p>将需要匹配的闪值列表以文本形式粘贴到下边的输入框.格式为:</p>
@@ -98,10 +104,32 @@
 
 <script>
 
+    function clear(){
+    var title='<tr>'+
+        '<td>Box</td>'+
+        '<td>Slot</td>'+
+        '<td>Pokemon</td>'+
+        '<td>Gender</td>'+
+        '<td>Nature</td>'+
+        '<td>Ability</td>'+
+        '<td>HP</td>'+
+       '<td>Atk</td>'+
+        '<td>Def</td>'+
+        '<td>SpA</td>'+
+       '<td>SpD</td>'+
+        '<td>Spd</td>'+
+        '<td>SV</td>'+
+        '<td>Trainer Name</td>'+
+        '</tr>';
+        var result=document.getElementById('result')
 
+        result.innerHTML=title;
 
-
+    }
     function match(){
+
+        clear();
+
         var eggs=document.getElementById('ESVinput').value;
         //console.log(eggs);
         var trainers=document.getElementById('TSVinput').value;
@@ -110,73 +138,187 @@
         var trainerarray=trainers.split('\n')
         console.log(trainerarray);
 
+        var format=$('#formats').val();
+        if(format==1){ //mass dumper
+            console.log('mass dumper mode')
+            for(var i=1;i<eggarray.length;i++){
+                var eggsv=eggarray[i];
 
-        for(var i=1;i<eggarray.length;i++){
-           var eggsv=eggarray[i];
-            eggsv=eggsv.split('[')[1].split(']')[0];
-            eggsv=parseInt(eggsv);
-            //console.log(eggsv);
+                if(eggsv.split('[').length>1){   //egg
 
-            var svlist=[];
-            for(var j=0;j<trainerarray.length;j++){
-               var sv=parseInt(trainerarray[j].split(' ')[0]);
-               if(sv==eggsv){
-                   console.log('bingo!'+trainerarray[j])
-                   svlist.push(j);
-               }
-            }
+                    eggsv=eggsv.split('[')[1].split(']')[0];
+                    eggsv=parseInt(eggsv);
+                    console.log(eggsv)
 
-            var spread=eggarray[i].split(' - ');
-            //console.log(spread);
+                }else{
 
-            var result=document.getElementById('result')
-            var newTR = result.insertRow(result.rows.length);
-
-
-
-            var box=newTR.insertCell(newTR.cells.length);
-            var slot=newTR.insertCell(newTR.cells.length);
-            var pokemon=newTR.insertCell(newTR.cells.length);
-            var Gender=newTR.insertCell(newTR.cells.length);
-            var Nature=newTR.insertCell(newTR.cells.length);
-            var Ability=newTR.insertCell(newTR.cells.length);
-            var HP=newTR.insertCell(newTR.cells.length);
-            var Atk=newTR.insertCell(newTR.cells.length);
-            var Def=newTR.insertCell(newTR.cells.length);
-            var SAtk=newTR.insertCell(newTR.cells.length);
-            var SDef=newTR.insertCell(newTR.cells.length);
-            var Spd=newTR.insertCell(newTR.cells.length);
-            var SV=newTR.insertCell(newTR.cells.length);
-            var name=newTR.insertCell(newTR.cells.length);
-
-            box.innerHTML=spread[0];
-            slot.innerHTML=spread[1];
-            pokemon.innerHTML=spread[2].split('(')[0]
-            Gender.innerHTML=spread[2].split('(')[1].split(')')[0];
-            Nature.innerHTML=spread[3];
-            Ability.innerHTML=spread[4];
-            HP.innerHTML=spread[5].split('.')[0];
-            Atk.innerHTML=spread[5].split('.')[1];
-            Def.innerHTML=spread[5].split('.')[2];
-            SAtk.innerHTML=spread[5].split('.')[3];
-            SDef.innerHTML=spread[5].split('.')[4];
-            Spd.innerHTML=spread[5].split('.')[5].split(' ')[0]
-            SV.innerHTML=spread[5].split('.')[5].split(' ')[1].split(']')[0].split('[')[1];''
-
-            var str='';
-            if(svlist.length>0){
-
-                for(var s=0; s<svlist.length;s++){
-                   str+=trainerarray[svlist[s]].split(' ')[1]+' ';
+                    eggsv=eggsv.split('(')[2].split(')')[0];
+                    console.log(eggsv)
+                    eggsv=parseInt(eggsv);
+                    console.log(eggsv)
+                    console.log('not egg')
                 }
 
-                newTR.className='bingo'
+                //console.log(eggsv);
+
+                var svlist=[];
+                for(var j=0;j<trainerarray.length;j++){
+                    var sv=parseInt(trainerarray[j].split(' ')[0]);
+                    if(sv==eggsv){
+                        console.log('bingo!'+trainerarray[j])
+                        svlist.push(j);
+                    }
+                }
+
+                var spread=eggarray[i].split(' - ');
+                //console.log(spread);
+
+                var result=document.getElementById('result')
+                var newTR = result.insertRow(result.rows.length);
+
+
+
+                var box=newTR.insertCell(newTR.cells.length);
+                var slot=newTR.insertCell(newTR.cells.length);
+                var pokemon=newTR.insertCell(newTR.cells.length);
+                var Gender=newTR.insertCell(newTR.cells.length);
+                var Nature=newTR.insertCell(newTR.cells.length);
+                var Ability=newTR.insertCell(newTR.cells.length);
+                var HP=newTR.insertCell(newTR.cells.length);
+                var Atk=newTR.insertCell(newTR.cells.length);
+                var Def=newTR.insertCell(newTR.cells.length);
+                var SAtk=newTR.insertCell(newTR.cells.length);
+                var SDef=newTR.insertCell(newTR.cells.length);
+                var Spd=newTR.insertCell(newTR.cells.length);
+                var SV=newTR.insertCell(newTR.cells.length);
+                var name=newTR.insertCell(newTR.cells.length);
+
+                box.innerHTML=spread[0];
+                slot.innerHTML=spread[1];
+                pokemon.innerHTML=spread[2].split('(')[0]
+                Gender.innerHTML=spread[2].split('(')[1].split(')')[0];
+                Nature.innerHTML=spread[3];
+                Ability.innerHTML=spread[4];
+                HP.innerHTML=spread[5].split('.')[0];
+                Atk.innerHTML=spread[5].split('.')[1];
+                Def.innerHTML=spread[5].split('.')[2];
+                SAtk.innerHTML=spread[5].split('.')[3];
+                SDef.innerHTML=spread[5].split('.')[4];
+                Spd.innerHTML=spread[5].split('.')[5].split(' ')[0]
+
+
+                if(spread[5].split('.')[5].split(' ')[1].split(']').length>1){
+                    SV.innerHTML=spread[5].split('.')[5].split(' ')[1].split(']')[0].split('[')[1];''
+                }else{
+                    SV.innerHTML='not egg'+spread[5].split('.')[5].split(' ')[1].split(')')[0].split('(')[1];''
+                }
+
+
+
+                var str='';
+                if(svlist.length>0){
+
+                    for(var s=0; s<svlist.length;s++){
+                        str+=trainerarray[svlist[s]].split(' ')[1]+' ';
+                    }
+
+                    newTR.className='bingo'
+                }
+                name.innerHTML=str;
+
             }
-            name.innerHTML=str;
 
         }
+        else if(format==2){ //keysav
+            console.log('keysav mode')
+            for(var i=1;i<eggarray.length;i++){
+                var eggsv=eggarray[i];
+
+                if(eggsv.split('[').length>1){   //egg
+
+                    eggsv=eggsv.split('[')[1].split(']')[0];
+                    eggsv=parseInt(eggsv);
+                    console.log(eggsv)
+
+                }else{
+
+                    eggsv=eggsv.split('(')[2].split(')')[0];
+                    console.log(eggsv)
+                    eggsv=parseInt(eggsv);
+                    console.log(eggsv)
+                    console.log('not egg')
+                }
+
+                //console.log(eggsv);
+
+                var svlist=[];
+                for(var j=0;j<trainerarray.length;j++){
+                    var sv=parseInt(trainerarray[j].split(' ')[0]);
+                    if(sv==eggsv){
+                        console.log('bingo!'+trainerarray[j])
+                        svlist.push(j);
+                    }
+                }
+
+                var spread=eggarray[i].split(' - ');
+                console.log(spread);
+
+                var result=document.getElementById('result')
+                var newTR = result.insertRow(result.rows.length);
 
 
+
+                var box=newTR.insertCell(newTR.cells.length);
+                var slot=newTR.insertCell(newTR.cells.length);
+                var pokemon=newTR.insertCell(newTR.cells.length);
+                var Gender=newTR.insertCell(newTR.cells.length);
+                var Nature=newTR.insertCell(newTR.cells.length);
+                var Ability=newTR.insertCell(newTR.cells.length);
+                var HP=newTR.insertCell(newTR.cells.length);
+                var Atk=newTR.insertCell(newTR.cells.length);
+                var Def=newTR.insertCell(newTR.cells.length);
+                var SAtk=newTR.insertCell(newTR.cells.length);
+                var SDef=newTR.insertCell(newTR.cells.length);
+                var Spd=newTR.insertCell(newTR.cells.length);
+                var SV=newTR.insertCell(newTR.cells.length);
+                var name=newTR.insertCell(newTR.cells.length);
+
+                box.innerHTML='-';
+                slot.innerHTML=spread[0];
+                pokemon.innerHTML=spread[1].split('(')[0]
+                Gender.innerHTML=spread[1].split('(')[1].split(')')[0];
+                Nature.innerHTML=spread[2];
+                Ability.innerHTML=spread[3];
+                HP.innerHTML=spread[4].split('.')[0];
+                Atk.innerHTML=spread[4].split('.')[1];
+                Def.innerHTML=spread[4].split('.')[2];
+                SAtk.innerHTML=spread[4].split('.')[3];
+                SDef.innerHTML=spread[4].split('.')[4];
+                Spd.innerHTML=spread[4].split('.')[5].split(' ')[0]
+                if(spread[4].split('.')[5].split(' ')[1].split(']').length>1){
+                    SV.innerHTML=spread[4].split('.')[5].split(' ')[1].split(']')[0].split('[')[1];''
+                    console.log('>1')
+                }else{
+                    SV.innerHTML='not egg'+spread[4].split('.')[5].split(' ')[1].split(')')[0].split('(')[1];''
+                }
+
+
+
+                var str='';
+                if(svlist.length>0){
+
+                    for(var s=0; s<svlist.length;s++){
+                        str+=trainerarray[svlist[s]].split(' ')[1]+' ';
+                    }
+
+                    newTR.className='bingo'
+                }
+                name.innerHTML=str;
+
+            }
+
+
+        }
     }
 
 
