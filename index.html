@@ -285,8 +285,18 @@
 
                 box.innerHTML='-';
                 slot.innerHTML=spread[0];
-                pokemon.innerHTML=spread[1].split('(')[0]
-                Gender.innerHTML=spread[1].split('(')[1].split(')')[0];
+
+                if(spread[1].split('(').length>1){ // gender
+                    pokemon.innerHTML=spread[1].split('(')[0]
+                    Gender.innerHTML=spread[1].split('(')[1].split(')')[0];
+                }
+                else{
+                    pokemon.innerHTML=spread[1]
+                    Gender.innerHTML='--'
+                }
+
+
+
                 Nature.innerHTML=spread[2];
                 Ability.innerHTML=spread[3];
                 HP.innerHTML=spread[4].split('.')[0];
