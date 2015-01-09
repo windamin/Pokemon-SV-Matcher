@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Pokemon SV Matcher ver 0.01 alpha</title>
+    <title>Pokemon SV Matcher ver 0.02 alpha</title>
+    <script src="js/sv.js"></script>
     <style>
         body{
         background: #000000;
@@ -103,7 +104,7 @@
 </body>
 
 <script>
-
+$('#TSVinput').val(sv)
     function clear(){
     var title='<tr>'+
         '<td>Box</td>'+
@@ -124,6 +125,8 @@
         var result=document.getElementById('result')
 
         result.innerHTML=title;
+
+
 
     }
     function match(){
